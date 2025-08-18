@@ -6,6 +6,8 @@ import (
 	"go-api/configs"
 	"go-api/pkg/res"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -35,16 +37,18 @@ func (h *AuthHandler) Login() http.HandlerFunc {
 			return
 		}
 
-		if payload.Password == "" {
-			res.Json(w, http.StatusBadRequest, "Password is required")
-			return
-		}
-		if payload.Email == "" {
-			res.Json(w, http.StatusBadRequest, "Email is required")
-			return
-		}
+		validate := validator.New()
 
-		fmt.Println("Login", payload)
+		err = validate.Struct(payload)
+
+		if err != nil {
+			res.Json(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		// if payload.Email == "" {
+		// 	res.Json(w, http.StatusBadRequest, "Email is required")
+		// 	return
+		// }
 
 		data := LoginPayload{
 			Token: "123",
