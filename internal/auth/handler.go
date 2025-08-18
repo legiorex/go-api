@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-api/configs"
 	"go-api/pkg/res"
@@ -25,8 +26,25 @@ func NewAuthHandler(router *http.ServeMux, deps AuthHandlerDeps) {
 
 func (h *AuthHandler) Login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(h.Config.Auth.Secret)
-		fmt.Println("Login")
+		var payload LoginRequest
+
+		err := json.NewDecoder(r.Body).Decode(&payload)
+
+		if err != nil {
+			res.Json(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		if payload.Password == "" {
+			res.Json(w, http.StatusBadRequest, "Password is required")
+			return
+		}
+		if payload.Email == "" {
+			res.Json(w, http.StatusBadRequest, "Email is required")
+			return
+		}
+
+		fmt.Println("Login", payload)
 
 		data := LoginPayload{
 			Token: "123",
