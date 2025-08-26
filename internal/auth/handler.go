@@ -44,6 +44,20 @@ func (h *AuthHandler) Login() http.HandlerFunc {
 
 func (h *AuthHandler) Register() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Register")
+
+		payload, err := req.HandleBody[RegisterRequest](&w, r)
+
+		fmt.Println(payload)
+
+		if err != nil {
+			return
+		}
+
+		data := RegisterPayload{
+			Token: "123",
+		}
+
+		res.Json(w, http.StatusOK, data)
+
 	}
 }
