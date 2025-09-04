@@ -11,10 +11,11 @@ type LinkHandler struct{}
 func NewLinkHandler(router *http.ServeMux) {
 	linkHandler := &LinkHandler{}
 
-	router.Handle("POST /link/create", linkHandler.Create())
+	router.Handle("POST /link", linkHandler.Create())
 	router.Handle("GET /links", linkHandler.GetLinks())
-	router.Handle("PATCH /link/update", linkHandler.Update())
-	router.Handle("DELETE /link/delete", linkHandler.Delete())
+	router.Handle("GET /{alias}", linkHandler.GoTo())
+	router.Handle("PATCH /link/{id}", linkHandler.Update())
+	router.Handle("DELETE /link/{id}", linkHandler.Delete())
 }
 
 func (h *LinkHandler) Create() http.HandlerFunc {
@@ -31,6 +32,11 @@ func (h *LinkHandler) Create() http.HandlerFunc {
 }
 
 func (h *LinkHandler) GetLinks() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		res.Json(w, http.StatusOK, "links")
+	}
+}
+func (h *LinkHandler) GoTo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		res.Json(w, http.StatusOK, "links")
 	}
