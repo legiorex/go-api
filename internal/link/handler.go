@@ -7,10 +7,10 @@ import (
 )
 
 type LinkHandler struct {
-	LinkRepository *LinkRepository
+	LinkRepository LinkRepositoryInterface
 }
 type LinkHandlerDeps struct {
-	LinkRepository *LinkRepository
+	LinkRepository LinkRepositoryInterface
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {

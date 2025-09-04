@@ -4,31 +4,22 @@ import (
 	"fmt"
 	"net/http"
 
-	"go-api/configs"
 	"go-api/internal/auth"
 	"go-api/internal/link"
-	"go-api/pkg/db"
+	"go-api/pkg/container"
 )
 
 func main() {
 	fmt.Println("Starting server on port 8081")
-	config := configs.LoadConfig()
 
-	db := db.NewDb(config)
-
-	// Repositories
-
-	linkRepository := link.NewLinkRepository(db)
+	// Создаем все зависимости
+	container := container.NewContainer()
 
 	router := http.NewServeMux()
 
-	// Handlers
-	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
-		Config: config,
-	})
-	link.NewLinkHandler(router, link.LinkHandlerDeps{
-		LinkRepository: linkRepository,
-	})
+	// Инжектим готовые зависимости в handlers
+	auth.NewAuthHandler(router, container.GetAuthHandlerDeps())
+	link.NewLinkHandler(router, container.GetLinkHandlerDeps())
 
 	server := http.Server{
 		Addr:    ":8081",

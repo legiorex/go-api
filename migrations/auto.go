@@ -9,5 +9,5 @@ import (
 func main() {
 	config := configs.LoadConfig()
 	dataBase := db.NewDb(config)
-	dataBase.AutoMigrate(&link.Link{})
+	dataBase.GetDB().AutoMigrate(&link.Link{})
 }
