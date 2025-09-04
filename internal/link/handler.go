@@ -38,17 +38,22 @@ func (h *LinkHandler) GetLinks() http.HandlerFunc {
 }
 func (h *LinkHandler) GoTo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		res.Json(w, http.StatusOK, "links")
+		res.Json(w, http.StatusOK, "go to")
 	}
 }
 func (h *LinkHandler) Update() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		res.Json(w, http.StatusNoContent, "update")
+		id := r.PathValue("id")
+
+		res.Json(w, http.StatusOK, id)
 	}
 }
 func (h *LinkHandler) Delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		res.Json(w, http.StatusNoContent, "delete")
+
+		id := r.PathValue("id")
+
+		res.Json(w, http.StatusOK, id)
 	}
 }
