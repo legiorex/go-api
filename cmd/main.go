@@ -6,6 +6,7 @@ import (
 
 	"go-api/configs"
 	"go-api/internal/auth"
+	"go-api/internal/link"
 	"go-api/pkg/db"
 )
 
@@ -19,6 +20,8 @@ func main() {
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
 		Config: config,
 	})
+	link.NewLinkHandler(router)
+
 	server := http.Server{
 		Addr:    ":8081",
 		Handler: router,
