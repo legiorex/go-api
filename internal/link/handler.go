@@ -6,10 +6,17 @@ import (
 	"net/http"
 )
 
-type LinkHandler struct{}
+type LinkHandler struct {
+	LinkRepository *LinkRepository
+}
+type LinkHandlerDeps struct {
+	LinkRepository *LinkRepository
+}
 
-func NewLinkHandler(router *http.ServeMux) {
-	linkHandler := &LinkHandler{}
+func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
+	linkHandler := &LinkHandler{
+		LinkRepository: deps.LinkRepository,
+	}
 
 	router.Handle("POST /link", linkHandler.Create())
 	router.Handle("GET /links", linkHandler.GetLinks())

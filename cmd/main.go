@@ -14,13 +14,21 @@ func main() {
 	fmt.Println("Starting server on port 8081")
 	config := configs.LoadConfig()
 
-	_ = db.NewDb(config)
+	db := db.NewDb(config)
+
+	// Repositories
+
+	linkRepository := link.NewLinkRepository(db)
 
 	router := http.NewServeMux()
+
+	// Handlers
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
 		Config: config,
 	})
-	link.NewLinkHandler(router)
+	link.NewLinkHandler(router, link.LinkHandlerDeps{
+		LinkRepository: linkRepository,
+	})
 
 	server := http.Server{
 		Addr:    ":8081",
