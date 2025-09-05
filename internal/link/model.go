@@ -13,16 +13,25 @@ type Link struct {
 }
 
 func NewLink(url string) *Link {
-	return &Link{
-		Url:  url,
-		Hash: randHash(6),
+
+	link := &Link{
+		Url: url,
 	}
+
+	link.Hash = link.GenerateHash()
+
+	return link
+
+}
+
+func (link *Link) GenerateHash() string {
+	return randHash(6)
 }
 
 var runes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func randHash(n int) string {
-	runesSlice := make([]byte, n)
+	runesSlice := make([]byte, 0, n)
 
 	for range n {
 		runesSlice = append(runesSlice, runes[rand.Intn(len(runes))])
