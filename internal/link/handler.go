@@ -5,6 +5,8 @@ import (
 	"go-api/pkg/res"
 	"net/http"
 	"strconv"
+
+	"gorm.io/gorm"
 )
 
 type LinkHandler struct {
@@ -80,14 +82,28 @@ func (h *LinkHandler) Update() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-		idInt, _ := strconv.Atoi(id)
-
-		url := r.URL.Query().Get("url")
-
-		link, err := h.LinkRepository.Update(uint(idInt), url)
+		idInt, err := strconv.Atoi(id)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		body, err := req.HandleBody[LinkUpdateRequest](&w, r)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		link, err := h.LinkRepository.Update(&Link{
+			Model: gorm.Model{ID: uint(idInt)},
+			Url:   body.Url,
+			Hash:  body.Hash,
+		})
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
