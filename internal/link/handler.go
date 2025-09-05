@@ -4,6 +4,7 @@ import (
 	"go-api/pkg/req"
 	"go-api/pkg/res"
 	"net/http"
+	"strconv"
 )
 
 type LinkHandler struct {
@@ -79,8 +80,18 @@ func (h *LinkHandler) Update() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
+		idInt, _ := strconv.Atoi(id)
 
-		res.Json(w, http.StatusOK, id)
+		url := r.URL.Query().Get("url")
+
+		link, err := h.LinkRepository.Update(uint(idInt), url)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		res.Json(w, http.StatusOK, link)
 	}
 }
 func (h *LinkHandler) Delete() http.HandlerFunc {
