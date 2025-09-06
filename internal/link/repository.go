@@ -81,6 +81,20 @@ func (repo *LinkRepository) GetByID(id uint) (*Link, error) {
 	return &link, nil
 }
 
+func (repo *LinkRepository) GetAll() ([]Link, error) {
+
+	var links []Link
+
+	result := repo.Database.GetDB().Find(&links)
+
+	if result.Error != nil {
+		return nil, result.Error
+
+	}
+
+	return links, nil
+}
+
 // func (repo *LinkRepository) Update(id uint, url string) (*Link, error) {
 
 // 	db := repo.Database.GetDB()

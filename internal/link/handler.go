@@ -60,6 +60,16 @@ func (h *LinkHandler) Create() http.HandlerFunc {
 
 func (h *LinkHandler) GetLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		links, err := h.LinkRepository.GetAll()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		res.Json(w, http.StatusCreated, links)
+
 		res.Json(w, http.StatusOK, "links")
 	}
 }

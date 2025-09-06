@@ -6,5 +6,5 @@ type LinkRepositoryInterface interface {
 	Update(link *Link) (*Link, error)
 	Delete(id uint) error
 	GetByID(id uint) (*Link, error)
-	// GetAll() ([]Link, error)
+	GetAll() ([]Link, error)
 }
