@@ -115,6 +115,27 @@ func (h *LinkHandler) Delete() http.HandlerFunc {
 
 		id := r.PathValue("id")
 
-		res.Json(w, http.StatusOK, id)
+		idInt, err := strconv.Atoi(id)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		_, err = h.LinkRepository.GetByID(uint(idInt))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		err = h.LinkRepository.Delete(uint(idInt))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		res.Json(w, http.StatusOK, "success")
 	}
 }

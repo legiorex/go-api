@@ -56,6 +56,31 @@ func (repo *LinkRepository) Update(link *Link) (*Link, error) {
 	return link, nil
 }
 
+func (repo *LinkRepository) Delete(id uint) error {
+	result := repo.Database.GetDB().Delete(&Link{}, id)
+
+	if result.Error != nil {
+		return result.Error
+
+	}
+
+	return nil
+}
+
+func (repo *LinkRepository) GetByID(id uint) (*Link, error) {
+
+	var link Link
+
+	result := repo.Database.GetDB().First(link, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+
+	}
+
+	return &link, nil
+}
+
 // func (repo *LinkRepository) Update(id uint, url string) (*Link, error) {
 
 // 	db := repo.Database.GetDB()
