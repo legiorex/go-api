@@ -13,7 +13,7 @@ type Container struct {
 	Database       db.DatabaseInterface
 	LinkRepository link.LinkRepositoryInterface
 	UserRepository user.UserRepositoryInterface
-	// AuthService    auth.AuthServiceInterface
+	AuthService    auth.AuthServiceInterface
 }
 
 func NewContainer() *Container {
@@ -22,14 +22,17 @@ func NewContainer() *Container {
 
 	linkRepo := link.NewLinkRepository(database)
 	userRepo := user.NewUserRepository(database)
-	// authService := auth.NewAuthService(config)
+
+	authService := auth.NewAuthService(auth.AuthServiceDeps{
+		UserRepository: userRepo,
+	})
 
 	return &Container{
 		Config:         config,
 		Database:       database,
 		LinkRepository: linkRepo,
 		UserRepository: userRepo,
-		// AuthService:    authService,
+		AuthService:    authService,
 	}
 }
 
@@ -41,6 +44,7 @@ func (c *Container) GetLinkHandlerDeps() link.LinkHandlerDeps {
 
 func (c *Container) GetAuthHandlerDeps() auth.AuthHandlerDeps {
 	return auth.AuthHandlerDeps{
-		Config: c.Config,
+		Config:      c.Config,
+		AuthService: c.AuthService,
 	}
 }
