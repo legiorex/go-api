@@ -12,7 +12,10 @@ type RegisterRequest struct {
 
 type LoginPayload struct {
 	Token string `json:"token"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 type RegisterPayload struct {
 	Token string `json:"token"`
+	Email string `json:"email"`
 }

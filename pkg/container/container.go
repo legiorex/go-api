@@ -6,6 +6,7 @@ import (
 	"go-api/internal/link"
 	"go-api/internal/user"
 	"go-api/pkg/db"
+	"go-api/pkg/jwt"
 )
 
 type Container struct {
@@ -14,11 +15,13 @@ type Container struct {
 	LinkRepository link.LinkRepositoryInterface
 	UserRepository user.UserRepositoryInterface
 	AuthService    auth.AuthServiceInterface
+	JWT            *jwt.JWT
 }
 
 func NewContainer() *Container {
 	config := configs.LoadConfig()
 	database := db.NewDb(config)
+	jwt := jwt.NewJWT(config.Auth.Secret)
 
 	linkRepo := link.NewLinkRepository(database)
 	userRepo := user.NewUserRepository(database)
@@ -33,6 +36,7 @@ func NewContainer() *Container {
 		LinkRepository: linkRepo,
 		UserRepository: userRepo,
 		AuthService:    authService,
+		JWT:            jwt,
 	}
 }
 
@@ -46,5 +50,6 @@ func (c *Container) GetAuthHandlerDeps() auth.AuthHandlerDeps {
 	return auth.AuthHandlerDeps{
 		Config:      c.Config,
 		AuthService: c.AuthService,
+		JWT:         c.JWT,
 	}
 }
