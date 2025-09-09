@@ -1,6 +1,7 @@
 package link
 
 import (
+	"go-api/pkg/middleware"
 	"go-api/pkg/req"
 	"go-api/pkg/res"
 	"net/http"
@@ -21,11 +22,11 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 		LinkRepository: deps.LinkRepository,
 	}
 
-	router.Handle("POST /link", linkHandler.Create())
-	router.Handle("GET /links", linkHandler.GetLinks())
-	router.Handle("GET /{hash}", linkHandler.GoTo())
-	router.Handle("PATCH /link/{id}", linkHandler.Update())
-	router.Handle("DELETE /link/{id}", linkHandler.Delete())
+	router.HandleFunc("POST /link", linkHandler.Create())
+	router.HandleFunc("GET /links", linkHandler.GetLinks())
+	router.HandleFunc("GET /{hash}", linkHandler.GoTo())
+	router.Handle("PATCH /link/{id}", middleware.Bearer(linkHandler.Update()))
+	router.HandleFunc("DELETE /link/{id}", linkHandler.Delete())
 }
 
 func (h *LinkHandler) Create() http.HandlerFunc {

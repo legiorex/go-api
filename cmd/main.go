@@ -22,7 +22,10 @@ func main() {
 	auth.NewAuthHandler(router, container.GetAuthHandlerDeps())
 	link.NewLinkHandler(router, container.GetLinkHandlerDeps())
 
-	stack := middleware.Chain(middleware.Logging, middleware.CORS)
+	stack := middleware.Chain(
+		middleware.Logging,
+		middleware.CORS,
+	)
 
 	server := http.Server{
 		Addr:    ":8081",
