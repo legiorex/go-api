@@ -43,6 +43,7 @@ func NewContainer() *Container {
 func (c *Container) GetLinkHandlerDeps() link.LinkHandlerDeps {
 	return link.LinkHandlerDeps{
 		LinkRepository: c.LinkRepository,
+		JWT:            c.JWT,
 	}
 }
 

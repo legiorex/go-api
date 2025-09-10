@@ -1,6 +1,7 @@
 package link
 
 import (
+	"go-api/pkg/jwt"
 	"go-api/pkg/middleware"
 	"go-api/pkg/req"
 	"go-api/pkg/res"
@@ -12,9 +13,11 @@ import (
 
 type LinkHandler struct {
 	LinkRepository LinkRepositoryInterface
+	*jwt.JWT
 }
 type LinkHandlerDeps struct {
 	LinkRepository LinkRepositoryInterface
+	*jwt.JWT
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
@@ -25,7 +28,7 @@ func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	router.HandleFunc("POST /link", linkHandler.Create())
 	router.HandleFunc("GET /links", linkHandler.GetLinks())
 	router.HandleFunc("GET /{hash}", linkHandler.GoTo())
-	router.Handle("PATCH /link/{id}", middleware.Bearer(linkHandler.Update()))
+	router.Handle("PATCH /link/{id}", middleware.Auth(linkHandler.Update(), deps.JWT))
 	router.HandleFunc("DELETE /link/{id}", linkHandler.Delete())
 }
 

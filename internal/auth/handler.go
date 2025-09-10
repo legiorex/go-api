@@ -46,7 +46,7 @@ func (h *AuthHandler) Login() http.HandlerFunc {
 			return
 		}
 
-		token, err := h.JWT.Create(user.Email)
+		token, err := h.JWT.Create(&jwt.JWTData{Email: user.Email})
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -79,7 +79,7 @@ func (h *AuthHandler) Register() http.HandlerFunc {
 			return
 		}
 
-		token, err := h.JWT.Create(body.Email)
+		token, err := h.JWT.Create(&jwt.JWTData{Email: body.Email})
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
