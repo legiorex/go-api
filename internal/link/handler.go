@@ -1,6 +1,7 @@
 package link
 
 import (
+	"fmt"
 	"go-api/pkg/jwt"
 	"go-api/pkg/middleware"
 	"go-api/pkg/req"
@@ -97,6 +98,11 @@ func (h *LinkHandler) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		idInt, err := strconv.Atoi(id)
+
+		email, ok := r.Context().Value(middleware.ContextEmailKey).(string)
+
+		fmt.Println(email)
+		fmt.Println(ok)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
