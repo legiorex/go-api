@@ -95,6 +95,41 @@ func (repo *LinkRepository) GetAll() ([]Link, error) {
 	return links, nil
 }
 
+func (repo *LinkRepository) GetAllPagination(limit, offset int) ([]Link, error) {
+
+	var links []Link
+
+	// repo.Database.GetDB().
+	// 	Table("links").
+	// 	Where("deleted_at is null").
+	// 	Order("id").
+	// 	Limit(limit).
+	// 	Offset(offset).
+	// 	Scan(&links)
+
+	result := repo.Database.GetDB().
+		Order("id").
+		Limit(limit).
+		Offset(offset).
+		Find(&links)
+
+	if result.Error != nil {
+		return nil, result.Error
+
+	}
+
+	return links, nil
+}
+
+func (repo *LinkRepository) GetCount() int64 {
+	var count int64
+	repo.Database.GetDB().
+		Table("links").
+		Where("deleted_at is null").
+		Count(&count)
+	return count
+}
+
 // func (repo *LinkRepository) Update(id uint, url string) (*Link, error) {
 
 // 	db := repo.Database.GetDB()

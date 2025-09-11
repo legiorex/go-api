@@ -7,4 +7,6 @@ type LinkRepositoryInterface interface {
 	Delete(id uint) error
 	GetByID(id uint) (*Link, error)
 	GetAll() ([]Link, error)
+	GetAllPagination(limit, offset int) ([]Link, error)
+	GetCount() int64
 }

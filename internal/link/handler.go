@@ -66,16 +66,40 @@ func (h *LinkHandler) Create() http.HandlerFunc {
 func (h *LinkHandler) GetLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		links, err := h.LinkRepository.GetAll()
+		page := r.URL.Query().Get("page")
+		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		fmt.Println("page", page)
+		fmt.Println("limit", limit)
+		fmt.Println("offset", offset)
+
+		links, err := h.LinkRepository.GetAllPagination(limit, offset)
+		total := h.LinkRepository.GetCount()
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		res.Json(w, http.StatusCreated, links)
+		response := LinksPaginationPayload{
+			Links: links,
+			Total: total,
+		}
 
-		res.Json(w, http.StatusOK, "links")
+		res.Json(w, http.StatusOK, response)
+
 	}
 }
 func (h *LinkHandler) GoTo() http.HandlerFunc {
