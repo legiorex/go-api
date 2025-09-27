@@ -1,9 +1,10 @@
 package stat
 
 import (
-	"fmt"
+	"go-api/pkg/req"
 	"go-api/pkg/res"
 	"net/http"
+	"time"
 )
 
 type StatHandler struct {
@@ -25,16 +26,32 @@ func (h *StatHandler) GetStat() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		from := r.URL.Query().Get("from")
+		params, err := req.HandleQuery[StatPayload](&w, r)
 
-		to := r.URL.Query().Get("to")
+		if err != nil {
+			return
+		}
 
-		by := r.URL.Query().Get("by")
+		const shortForm = "2006-01-02"
 
-		response := StatPayload{
+		from, err := time.Parse(shortForm, params.From)
+
+		if err != nil {
+			http.Error(w, "Invalid from params", http.StatusBadRequest)
+			return
+		}
+
+		to, err := time.Parse(shortForm, params.To)
+
+		if err != nil {
+			http.Error(w, "Invalid to params", http.StatusBadRequest)
+			return
+		}
+
+		response := StatGetResponse{
 			From: from,
 			To:   to,
-			By:   by,
+			By:   params.By,
 		}
 
 		res.Json(w, http.StatusOK, response)
