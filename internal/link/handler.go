@@ -2,6 +2,7 @@ package link
 
 import (
 	"fmt"
+	"go-api/pkg/event"
 	"go-api/pkg/jwt"
 	"go-api/pkg/middleware"
 	"go-api/pkg/req"
@@ -14,16 +15,20 @@ import (
 
 type LinkHandler struct {
 	LinkRepository LinkRepositoryInterface
+	EventBus       event.EventBusInterface
 	*jwt.JWT
 }
 type LinkHandlerDeps struct {
 	LinkRepository LinkRepositoryInterface
+	EventBus       event.EventBusInterface
+
 	*jwt.JWT
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {
 	linkHandler := &LinkHandler{
 		LinkRepository: deps.LinkRepository,
+		EventBus:       deps.EventBus,
 	}
 
 	router.HandleFunc("POST /link", linkHandler.Create())
@@ -113,6 +118,11 @@ func (h *LinkHandler) GoTo() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
+
+		go h.EventBus.Publish(event.Event{
+			Type: event.TypeLinkVisitedEvent,
+			Data: link.ID,
+		})
 
 		http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
 	}
