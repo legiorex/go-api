@@ -6,6 +6,7 @@ import (
 
 	"go-api/internal/auth"
 	"go-api/internal/link"
+	"go-api/internal/stat"
 	"go-api/pkg/container"
 	"go-api/pkg/middleware"
 )
@@ -21,6 +22,7 @@ func main() {
 	// Инжектим готовые зависимости в handlers
 	auth.NewAuthHandler(router, container.GetAuthHandlerDeps())
 	link.NewLinkHandler(router, container.GetLinkHandlerDeps())
+	stat.NewStatHandler(router, container.GetStatHandlerDeps())
 
 	stack := middleware.Chain(
 		middleware.Logging,

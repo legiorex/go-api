@@ -71,3 +71,8 @@ func (c *Container) GetAuthHandlerDeps() auth.AuthHandlerDeps {
 		JWT:         c.JWT,
 	}
 }
+func (c *Container) GetStatHandlerDeps() stat.StatHandlerDeps {
+	return stat.StatHandlerDeps{
+		StatRepository: c.StatRepository,
+	}
+}
