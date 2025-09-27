@@ -23,9 +23,20 @@ func NewStatHandler(router *http.ServeMux, deps StatHandlerDeps) {
 
 func (h *StatHandler) GetStat() http.HandlerFunc {
 
-	fmt.Println("get stat")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		res.Json(w, http.StatusOK, "")
+
+		from := r.URL.Query().Get("from")
+
+		to := r.URL.Query().Get("to")
+
+		by := r.URL.Query().Get("by")
+
+		response := StatPayload{
+			From: from,
+			To:   to,
+			By:   by,
+		}
+
+		res.Json(w, http.StatusOK, response)
 	}
 }
