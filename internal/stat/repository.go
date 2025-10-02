@@ -54,7 +54,13 @@ func (repo *StatRepository) GetStats(data StatData) ([]StatPeriod, error) {
 		periodRequest = "YYYY-MM-DD"
 	}
 
-	result := repo.Database.GetDB().Table("stats").Select("TO_CHAR(date, ?) AS period, sum(clicks)", periodRequest).Where("date BETWEEN ? AND ?", data.From, data.To).Group("period").Order("period").Find(&period)
+	result := repo.Database.GetDB().
+		Table("stats").
+		Select("TO_CHAR(date, ?) AS period, sum(clicks)", periodRequest).
+		Where("date BETWEEN ? AND ?", data.From, data.To).
+		Group("period").
+		Order("period").
+		Find(&period)
 
 	if result.Error != nil {
 		return nil, result.Error
