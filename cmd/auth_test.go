@@ -18,10 +18,10 @@ func TestLoginSuccess(t *testing.T) {
 	ts := httptest.NewServer(App())
 	defer ts.Close()
 
-	// w := httptest.NewRecorder()
+	userEmail := "s@d.ru"
 
 	data, _ := json.Marshal(&auth.LoginRequest{
-		Email:    "s@d.ru",
+		Email:    userEmail,
 		Password: "12345",
 	})
 
@@ -37,9 +37,9 @@ func TestLoginSuccess(t *testing.T) {
 
 	config := configs.LoadConfig()
 
-	jwtTest := jwt.NewJWT(config.Auth.Secret)
+	jwtInit := jwt.NewJWT(config.Auth.Secret)
 
-	token, _ := jwtTest.Create(&jwt.JWTData{Email: "s@d.ru"})
+	token, _ := jwtInit.Create(&jwt.JWTData{Email: userEmail})
 
 	dataBody, _ := io.ReadAll(res.Body)
 
