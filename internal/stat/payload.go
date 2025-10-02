@@ -1,6 +1,8 @@
 package stat
 
-import "time"
+import (
+	"time"
+)
 
 type StatPayload struct {
 	From string `json:"from"`

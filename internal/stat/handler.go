@@ -48,10 +48,14 @@ func (h *StatHandler) GetStat() http.HandlerFunc {
 			return
 		}
 
-		response := StatGetResponse{
-			From: from,
-			To:   to,
-			By:   params.By,
+		response, err := h.StatRepository.GetStats(StatData{
+			From:   from,
+			To:     to,
+			Period: params.By})
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		res.Json(w, http.StatusOK, response)

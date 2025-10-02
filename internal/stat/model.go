@@ -11,3 +11,8 @@ type Stat struct {
 	Clicks uint           `json:"clicks"`
 	Date   datatypes.Date `json:"date"`
 }
+
+type StatPeriod struct {
+	Period string `json:"period"`
+	Sum    uint   `json:"sum"`
+}
