@@ -11,7 +11,7 @@ import (
 	"go-api/pkg/middleware"
 )
 
-func main() {
+func App() http.Handler {
 	fmt.Println("Starting server on port 8081")
 
 	// Создаем все зависимости
@@ -29,9 +29,15 @@ func main() {
 		middleware.CORS,
 	)
 
+	return stack(router)
+}
+
+func main() {
+	app := App()
+
 	server := http.Server{
 		Addr:    ":8081",
-		Handler: stack(router),
+		Handler: app,
 	}
 
 	server.ListenAndServe()
