@@ -6,19 +6,51 @@ import (
 	"fmt"
 	"go-api/configs"
 	"go-api/internal/auth"
+	"go-api/internal/user"
 	"go-api/pkg/jwt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
+
 	"testing"
+
+	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
+func initDb() *gorm.DB {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	db, err := gorm.Open(postgres.Open(os.Getenv(("DSN"))), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	return db
+}
+
+var userEmail = "s@d2.ru"
+
+func initData(db *gorm.DB) {
+	db.Create(&user.User{
+		Email:    userEmail,
+		Password: "$2a$10$l4sm.W4LRQB.hzdtqSHcCehA.7kZxCabvdmdk3dCyxmYH3IeJZFca",
+		Name:     "Jon",
+	})
+}
+
 func TestLoginSuccess(t *testing.T) {
+	db := initDb()
+	initData(db)
 
 	ts := httptest.NewServer(App())
 	defer ts.Close()
-
-	userEmail := "s@d.ru"
 
 	data, _ := json.Marshal(&auth.LoginRequest{
 		Email:    userEmail,
@@ -61,10 +93,11 @@ func TestLoginSuccess(t *testing.T) {
 
 func TestLoginFail(t *testing.T) {
 
+	db := initDb()
+	initData(db)
+
 	ts := httptest.NewServer(App())
 	defer ts.Close()
-
-	userEmail := "s@d.ru"
 
 	data, _ := json.Marshal(&auth.LoginRequest{
 		Email:    userEmail,
@@ -77,7 +110,7 @@ func TestLoginFail(t *testing.T) {
 		t.Fatal()
 	}
 
-	if res.StatusCode == 400 {
+	if res.StatusCode != 400 {
 		t.Fatalf("Expected 400 got %d", res.StatusCode)
 	}
 
