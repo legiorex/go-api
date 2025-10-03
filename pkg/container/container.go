@@ -33,9 +33,7 @@ func NewContainer() *Container {
 	userRepo := user.NewUserRepository(database)
 	statRepo := stat.NewStatRepository(database)
 
-	authService := auth.NewAuthService(auth.AuthServiceDeps{
-		UserRepository: userRepo,
-	})
+	authService := auth.NewAuthService(userRepo)
 
 	statService := stat.NewServiceStat(&stat.ServiceStatDeps{
 		EventBus:       eventBus,

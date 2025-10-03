@@ -11,13 +11,9 @@ type AuthService struct {
 	UserRepository user.UserRepositoryInterface
 }
 
-type AuthServiceDeps struct {
-	UserRepository user.UserRepositoryInterface
-}
-
-func NewAuthService(deps AuthServiceDeps) AuthServiceInterface {
+func NewAuthService(userRepository user.UserRepositoryInterface) AuthServiceInterface {
 	return &AuthService{
-		UserRepository: deps.UserRepository,
+		UserRepository: userRepository,
 	}
 }
 
