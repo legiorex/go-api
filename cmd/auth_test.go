@@ -45,7 +45,7 @@ func TestLoginSuccess(t *testing.T) {
 
 	var userResponse auth.LoginPayload
 
-	err = json.Unmarshal(dataBody, &userResponse)
+	json.Unmarshal(dataBody, &userResponse)
 
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON:", err)
@@ -57,4 +57,28 @@ func TestLoginSuccess(t *testing.T) {
 	if userResponse.Token != token {
 		t.Fatalf("Expected token %s got %s", token, userResponse.Token)
 	}
+}
+
+func TestLoginFail(t *testing.T) {
+
+	ts := httptest.NewServer(App())
+	defer ts.Close()
+
+	userEmail := "s@d.ru"
+
+	data, _ := json.Marshal(&auth.LoginRequest{
+		Email:    userEmail,
+		Password: "1234",
+	})
+
+	res, err := http.Post(ts.URL+"/auth/login", "application/json", bytes.NewReader(data))
+
+	if err != nil {
+		t.Fatal()
+	}
+
+	if res.StatusCode == 400 {
+		t.Fatalf("Expected 400 got %d", res.StatusCode)
+	}
+
 }
