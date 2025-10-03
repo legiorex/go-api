@@ -45,6 +45,12 @@ func initData(db *gorm.DB) {
 	})
 }
 
+func removeData(db *gorm.DB) {
+	db.Unscoped().
+		Where("email = ?", userEmail).
+		Delete(&user.User{})
+}
+
 func TestLoginSuccess(t *testing.T) {
 	db := initDb()
 	initData(db)
@@ -89,6 +95,7 @@ func TestLoginSuccess(t *testing.T) {
 	if userResponse.Token != token {
 		t.Fatalf("Expected token %s got %s", token, userResponse.Token)
 	}
+	removeData(db)
 }
 
 func TestLoginFail(t *testing.T) {
@@ -113,5 +120,5 @@ func TestLoginFail(t *testing.T) {
 	if res.StatusCode != 400 {
 		t.Fatalf("Expected 400 got %d", res.StatusCode)
 	}
-
+	removeData(db)
 }
